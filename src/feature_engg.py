@@ -37,5 +37,31 @@ def rolling_21D_volatility_prep(final_dataframe):
 
 final_dataframe = rolling_21D_volatility_prep(final_dataframe)
 
-print(final_dataframe.tail(21))
+def z_score_rolling_day_log_returns(final_dataframe):
+  mean_ret = final_dataframe['Rolling 21D Log Returns'].mean()
+  std_dev_ret = final_dataframe['Rolling 21D Log Returns'].std()
+  final_dataframe['Returns z-score'] = (final_dataframe['Rolling 21D Log Returns'] - mean_ret) / std_dev_ret
+
+  return final_dataframe
+
+final_dataframe = z_score_rolling_day_log_returns(final_dataframe)
+
+def z_score_rolling_volatility(final_dataframe):
+  #Normalize Rolling Volatility
+  mean_vol = final_dataframe['Rolling 21D Volatility'].mean()
+  std_dev_vol = final_dataframe['Rolling 21D Volatility'].std()
+  final_dataframe['Volatility z-score'] = (final_dataframe['Rolling 21D Volatility'] - mean_vol) / std_dev_vol
+
+  return final_dataframe
+
+final_dataframe = z_score_rolling_volatility(final_dataframe)
+
+print(final_dataframe.loc[final_dataframe['Returns z-score'].idxmax()])
+print(final_dataframe.loc[final_dataframe['Returns z-score'].idxmin()])
+
+print(final_dataframe.loc[final_dataframe['Volatility z-score'].idxmax()])
+print(final_dataframe.loc[final_dataframe['Volatility z-score'].idxmin()])
+
+# Percentile discussion underway because the outliers which are very severe are pulling the mean towards positive way or negative way
+
 
